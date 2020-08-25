@@ -1,2 +1,2 @@
-# walmart-sales-forecast
+# Walmart Sales Forecast
 Walmart sales forecasting project using ML algorithms.
