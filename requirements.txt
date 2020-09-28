@@ -3,3 +3,8 @@ pandas
 matplotlib
 seaborn
 scikit-learn
+streamlit
+numpy
+plotly
+pydeck
+streamlit

@@ -130,3 +130,7 @@ dmypy.json
 
 #VS code
 .vscode/*
+
+# Static folder
+/static/*
+!/static/.gitkeep
