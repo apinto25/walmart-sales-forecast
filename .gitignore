@@ -132,5 +132,4 @@ dmypy.json
 .vscode/*
 
 # Static folder
-/static/*
-!/static/.gitkeep
+/static/*.csv

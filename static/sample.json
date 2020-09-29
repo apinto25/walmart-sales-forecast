@@ -1,0 +1,7 @@
+{
+    "forest regression": "static/df_forest.csv",
+    "knn regressio": "static/df_knn.csv",
+    "linear regression": "static/df_linear.csv",
+    "real": "static/df_real.csv",
+    "tree regression": "static/df_tree.csv"
+}

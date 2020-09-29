@@ -1,3 +1,4 @@
+import os
 import json
 import streamlit as st
 import pandas as pd
@@ -61,7 +62,7 @@ def forest_regression(X_train, X_test, y_train, y_test):
     forest = RandomForestRegressor(n_estimators = 400,max_depth=15,n_jobs=5)
     forest.fit(X_train,y_train)
     y_pred = forest.predict(X_test)
-    return
+    return y_pred
 
 def update_json(key, value):
     with open("static/sample.json", 'r') as f:
