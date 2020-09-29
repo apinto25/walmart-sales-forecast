@@ -41,28 +41,37 @@ def linear_regression(X_train, X_test, y_train, y_test):
     lr = LinearRegression(normalize=True, fit_intercept=True)
     lr.fit(X_train,y_train)
     y_pred = lr.predict(X_test)
-    return y_pred
+    train_score = lr.score(X_train, y_train)
+    test_score = lr.score(X_test, y_test)
+    return y_pred, train_score, test_score
 
 
 def knn_regression(X_train, X_test, y_train, y_test):
     knn = KNeighborsRegressor(n_neighbors=10,n_jobs=4)
     knn.fit(X_train,y_train)
     y_pred = knn.predict(X_test)
-    return y_pred
+    train_score = knn.score(X_train, y_train)
+    test_score = knn.score(X_test, y_test)
+    return y_pred, train_score, test_score
 
 
 def tree_regression(X_train, X_test, y_train, y_test):
     tree = DecisionTreeRegressor(random_state=0)
     tree.fit(X_train,y_train)
     y_pred = tree.predict(X_test)
-    return y_pred
+    train_score = tree.score(X_train, y_train)
+    test_score = tree.score(X_test, y_test)
+    return y_pred, train_score, test_score
 
 
 def forest_regression(X_train, X_test, y_train, y_test):
     forest = RandomForestRegressor(n_estimators = 400,max_depth=15,n_jobs=5)
     forest.fit(X_train,y_train)
     y_pred = forest.predict(X_test)
-    return y_pred
+    train_score = forest.score(X_train, y_train)
+    test_score = forest.score(X_test, y_test)
+    return y_pred, train_score, test_score
+
 
 def update_json(key, value):
     with open("static/sample.json", 'r') as f:
@@ -106,6 +115,8 @@ st.markdown(
     sales of the Walmart dataset from Kaggle."""
 )
 
+st.markdown("## Training the models")
+
 original_data = load_data()
 data = original_data.copy()
 X_train, X_test, y_train, y_test = split_dataset(data)
@@ -133,7 +144,9 @@ if select == "Linear Regression":
     #     st.error("Hyperparameter should be integer")
 
     if st.button("Try algorithm"):
-        y_pred = linear_regression(X_train, X_test, y_train, y_test)
+        y_pred, train_score, test_score = linear_regression(X_train, X_test, y_train, y_test)
+        st.write("Training set score: {:.2f}".format(train_score))
+        st.write("Test set score: {:.2f}".format(test_score))
         linear_df = create_df(y_pred, dates, "linear regression")
         
         linear_df.to_csv('static/df_linear.csv', index=None)
@@ -141,15 +154,19 @@ if select == "Linear Regression":
 
 elif select == "KNN Regressor":
     if st.button("Try algorithm"):
-        y_pred = knn_regression(X_train, X_test, y_train, y_test)
+        y_pred, train_score, test_score = knn_regression(X_train, X_test, y_train, y_test)
+        st.write("Training set score: {:.2f}".format(train_score))
+        st.write("Test set score: {:.2f}".format(test_score))
         knn_df = create_df(y_pred, dates, "knn regression")
         
         knn_df.to_csv('static/df_knn.csv', index=None)
-        update_json("knn regressio", 'static/df_knn.csv')
+        update_json("knn regression", 'static/df_knn.csv')
 
 elif select == "Decission Tree Regressor":
     if st.button("Try algorithm"):
-        y_pred = tree_regression(X_train, X_test, y_train, y_test)
+        y_pred, train_score, test_score = tree_regression(X_train, X_test, y_train, y_test)
+        st.write("Training set score: {:.2f}".format(train_score))
+        st.write("Test set score: {:.2f}".format(test_score))
         tree_df = create_df(y_pred, dates, "tree regression")
         
         tree_df.to_csv('static/df_tree.csv', index=None)
@@ -157,7 +174,9 @@ elif select == "Decission Tree Regressor":
 
 elif select == "Random Forest Regressor":
     if st.button("Try algorithm"):
-        y_pred = forest_regression(X_train, X_test, y_train, y_test)
+        y_pred, train_score, test_score = forest_regression(X_train, X_test, y_train, y_test)
+        st.write("Training set score: {:.2f}".format(train_score))
+        st.write("Test set score: {:.2f}".format(test_score))
         forest_df = create_df(y_pred, dates, "forest regression")
 
         forest_df.to_csv('static/df_forest.csv', index=None)
@@ -168,17 +187,16 @@ with open("static/sample.json", 'r') as f:
     paths = json.loads(f.read())
 
 
+st.markdown("## Plotting the models")
 options = st.multiselect('Models to be ploted', list(paths.keys()))
-final_df = append_dfs(real_df, options)
 
-fig, ax = plt.subplots()
-sales = sns.lineplot(data=final_df, x="Date", y="Value", hue="Data", ax=ax)
-plt.xticks(rotation=30)
-sales.set_title("Average of sales per week and store type", fontsize=14)
-sales.set_ylabel("Average of weekly sales")
-sales.set_xlabel("Week date")
-st.pyplot(fig)
-
-
-
-
+if st.button("Plot models result"):
+    final_df = append_dfs(real_df, options)
+    
+    fig, ax = plt.subplots()
+    sales = sns.lineplot(data=final_df, x="Date", y="Value", hue="Data", ax=ax)
+    plt.xticks(rotation=30)
+    sales.set_title("Average of sales per week and store type", fontsize=14)
+    sales.set_ylabel("Average of weekly sales")
+    sales.set_xlabel("Week date")
+    st.pyplot(fig)
