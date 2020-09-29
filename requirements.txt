@@ -8,3 +8,5 @@ numpy
 plotly
 pydeck
 streamlit
+statsmodels
+
