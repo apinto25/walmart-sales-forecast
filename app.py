@@ -13,6 +13,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.preprocessing import StandardScaler
 
 
 hide_streamlit_style = """
@@ -47,7 +48,7 @@ def linear_regression(X_train, X_test, y_train, y_test):
 
 
 def knn_regression(X_train, X_test, y_train, y_test):
-    knn = KNeighborsRegressor(n_neighbors=10,n_jobs=4)
+    knn = KNeighborsRegressor(n_jobs=10, n_neighbors=25, p=1)
     knn.fit(X_train,y_train)
     y_pred = knn.predict(X_test)
     train_score = knn.score(X_train, y_train)
@@ -56,7 +57,7 @@ def knn_regression(X_train, X_test, y_train, y_test):
 
 
 def tree_regression(X_train, X_test, y_train, y_test):
-    tree = DecisionTreeRegressor(random_state=0)
+    tree = DecisionTreeRegressor(max_depth=25, max_leaf_nodes=70, min_samples_leaf=18)
     tree.fit(X_train,y_train)
     y_pred = tree.predict(X_test)
     train_score = tree.score(X_train, y_train)
@@ -65,7 +66,7 @@ def tree_regression(X_train, X_test, y_train, y_test):
 
 
 def forest_regression(X_train, X_test, y_train, y_test):
-    forest = RandomForestRegressor(n_estimators = 400,max_depth=15,n_jobs=5)
+    forest = RandomForestRegressor(n_estimators=400, max_depth=15, n_jobs=5)
     forest.fit(X_train,y_train)
     y_pred = forest.predict(X_test)
     train_score = forest.score(X_train, y_train)
@@ -196,7 +197,7 @@ if st.button("Plot models result"):
     fig, ax = plt.subplots()
     sales = sns.lineplot(data=final_df, x="Date", y="Value", hue="Data", ax=ax)
     plt.xticks(rotation=30)
-    sales.set_title("Average of sales per week and store type", fontsize=14)
+    sales.set_title("Average of sales per week", fontsize=14)
     sales.set_ylabel("Average of weekly sales")
     sales.set_xlabel("Week date")
     st.pyplot(fig)
